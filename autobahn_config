@@ -1,0 +1,14 @@
+bgzip:/home/users/cjyoon/bgzip
+tabix:/home/users/cjyoon/tabix
+delly:/home/users/cjyoon/tools/delly/src/delly
+dellymask:/home/users/cjyoon/tools/delly/excludeTemplates/human.hg19.excl.tsv
+manta:/home/users/cjyoon/anaconda3/envs/py27/share/manta-1.2.1-0/bin/configManta.py
+strelka2:/home/users/cjyoon/anaconda3/envs/py27/share/strelka-2.8.4-0/bin/configureStrelkaSomaticWorkflow.py
+lumpyexpress:/gscmnt/gc2525/dinglab/cyoon/software/lumpy-sv-v0.2.13/bin/lumpyexpress
+java:/home/users/cjyoon/anaconda3/bin/java
+python3:/home/users/cjyoon/anaconda3/bin/python
+python2:/home/users/cjyoon/anaconda3/envs/py27/bin/python
+pindel:/home/users/cjyoon/anaconda3/bin/pindel
+varscan:/home/users/cjyoon/anaconda3/share/varscan-2.4.3-0/VarScan.jar
+samtools:/home/users/cjyoon/anaconda3/bin/samtools
+

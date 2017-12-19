@@ -1,14 +1,19 @@
-# svpipe
-SV detection pipeline. Can run Delly, Lumpyexpress, MELT, Sveltor, etc. 
+# Autobahn
+Variant Calling Suite for Cancer Genomics
 
-Can be run on a single tumor/normal pair
-```bash
-python run_svtools.py -h
-```
+Given a cancer and matched normal pair, will call somatic variants. 
+SNVs
+* Varscan
+* GATK
 
-Can be used with LSF for batch submission
-```bash
-python submit_svJobs.py -h
-```
+Small Indels
+* Pindel
 
-svtools_config provides necessary path to various softwares used. 
+Structural Variants
+* Delly2
+* Lumpy
+* Manta
+
+Once variants have been called, will aggregate all results into a single file for easy downstream analysis
+
+`autobahn_config` provides necessary path to various softwares used. 
