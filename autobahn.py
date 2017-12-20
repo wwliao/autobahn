@@ -1,11 +1,11 @@
 """
-Forked from svpipe,
-Extending to call somatic structural variations, small indel, and large structural variation from 
-Cancer Normal Pair Bams
+Calls somatic 
+structural variations, small indel, and single nucleotide variants from 
+Cancer & Normal Pair of Bams
 
 Dec 18 2017, Chris Yoon (cjyoon@kaist.ac.kr)
 
-python run_svtools.py -r /gscmnt/gc2737/ding/Reference/hs37d5_plusRibo_plusOncoViruses_plusERCC.20170520.fa --config svtools_config --sample_info sampleInfo
+python autobahn.py -r reference.fa --sample_info sampleInfo.txt
 
 """
 
@@ -43,8 +43,8 @@ def argument_parser():
                         help='Root directory from which outputs will be written. Each tool will create a subdirectory under this folder')
     parser.add_argument('-s', '--sample_info', required=False,
                         help='Tab delimited file containing \n<sampleID>\t<cancerBamPath>\t<normalBamPath>')
-    parser.add_argument('-l', '--list_of_tools', required=False, nargs='+', default=['manta', 'strelka2', 'delly', 'varscan'], 
-                        help='List of tools to run, by default runs all available tools. Curently supported tools: delly, varscan, strelka2, manta. If running multiple tools, simply append additional tool name separated with a space. ex) -l varscan manta')
+    parser.add_argument('-l', '--list_of_tools', required=False, nargs='+', default=['manta', 'strelka', 'delly', 'varscan'], 
+                        help='List of tools to run, by default runs all available tools. Curently supported tools: delly, varscan, strelka, manta. If running multiple tools, simply append additional tool name separated with a space. ex) -l varscan manta')
     parser.add_argument('-d', '--dryrun', required=False, type=int, default=1,
                         help='If set to 1, will print out shell commands that ar run. If set to 0 will actually run the commands')
 
@@ -192,24 +192,24 @@ def run_manta(python2_path, manta_path, output_dir, reference_path, sampleID, ca
     execute(manta_runCMD, dryrun)
 
     candidateSmallIndel_file = os.path.join(
-        manta_outputdir, 'results/variants/candidateSmallIndels.vcf.gz')  # used as an input for Strelka2 input
+        manta_outputdir, 'results/variants/candidateSmallIndels.vcf.gz')  # used as an input for strelka input
 
     return candidateSmallIndel_file
 
 
-def run_strelka2(python2_path, strelka2_path, output_dir, reference_path, sampleID, cancerBam, normalBam, manta_indel_candidates, dryrun):
-    """runs strelka2 with python2, creates a runnable script to execute
+def run_strelka(python2_path, strelka_path, output_dir, reference_path, sampleID, cancerBam, normalBam, manta_indel_candidates, dryrun):
+    """runs strelka with python2, creates a runnable script to execute
     Need to run manta first to use its output"""
-    # create strelka2 configuration file
-    strelka2_outputdir = os.path.join(output_dir, sampleID)
-    strelka2_configCMD = f'{python2_path} {strelka2_path} --normalBam {normalBam} --tumorBam {tumorBam} --referenceFasta {reference_path} --indelCandidates {manta_indel_candidates} --runDir {strelka2_outputdir}'
-    execute(strelka2_configCMD, dryrun)
+    # create strelka configuration file
+    strelka_outputdir = os.path.join(output_dir, sampleID)
+    strelka_configCMD = f'{python2_path} {strelka_path} --normalBam {normalBam} --tumorBam {cancerBam} --referenceFasta {reference_path} --indelCandidates {manta_indel_candidates} --runDir {strelka_outputdir}'
+    execute(strelka_configCMD, dryrun)
 
     # now run the runWorkflow.py script generated from'runWorkflow.py' above
     # command
-    strelka2_script = os.path.join(strelka2_outputdir, 'runWorkflow.py')
-    strelka2_runCMD = f'{python2_path} {strelka2_script} -m local -j 8 --quiet'
-    execute(strelka2_runCMD, dryrun)
+    strelka_script = os.path.join(strelka_outputdir, 'runWorkflow.py')
+    strelka_runCMD = f'{python2_path} {strelka_script} -m local -j 8 --quiet'
+    execute(strelka_runCMD, dryrun)
 
     return 0
 
@@ -327,8 +327,8 @@ def main(cancer_bam, normal_bam, reference_fasta, multi_core, multi_thread, conf
                               'manta'], reference_fasta, sample_id, cancer_path, normal_path, dryrun)
 
         if 'strelka' in list_of_tools:  # output from manta is optional, but is required in this code
-            strelka2 = run_strelka2(paths['python2'], paths['strelka2'], output_dir_tools[
-                                    'strelka2'], reference_fasta, sample_id, cancer_path, normal_path, manta, dryrun)
+            strelka = run_strelka(paths['python2'], paths['strelka'], output_dir_tools[
+                                    'strelka'], reference_fasta, sample_id, cancer_path, normal_path, manta, dryrun)
     return 0
 
 
@@ -353,3 +353,5 @@ if __name__ == '__main__':
         delta = datetime.timedelta(seconds=(time.time() - start_time))
         print(f'# {delta}')
         print('# DONE')
+
+    return 0

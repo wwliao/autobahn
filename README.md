@@ -4,14 +4,11 @@ Variant Calling Suite for Cancer Genomics
 Given a cancer and matched normal pair, will call somatic variants. 
 SNVs
 * Varscan
-* GATK
-
-Small Indels
-* Pindel
+* Strelka2
 
 Structural Variants
 * Delly2
-* Lumpy
+* (Lumpy)
 * Manta
 
 Once variants have been called, will aggregate all results into a single file for easy downstream analysis
